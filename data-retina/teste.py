@@ -22,6 +22,7 @@
 
 # https://edu.atlanticoavanti.com.br/portal/curso-aula/produto/48482f8bdb4345ccb4972fd96bbf84ea/basico-em-machine-learning
 
+import numpy as np
 import cv2 
 from matplotlib import pyplot as plt
 
@@ -121,6 +122,63 @@ plt.show()
 
 #  CONTINUAR AQUI DUPLA DE DOMINGO : 
 
-#  é só continua de acordo om pdf :
-# Modulo 3 - unidade 2 - Pré-processamento de imagenss
-# aula 5 deva ajudar...
+# Numpy necessitou ser importado! Linha 25
+# Criadas funções para dar realce no contraste, Equalizar e Obter ranges minimos e máximos
+
+# Função para realce no contraste da imagem
+def realce_contraste(imagem, alpha, beta):
+    # Aplicar a transformação linear
+    imagem_realce = cv2.convertScaleAbs(imagem, alpha=alpha, beta=beta)
+
+    return imagem_realce
+
+# Alpha > 1 & Alpha < 3. Beta >= 1 && Beta < 2 *Valores aproximados
+imagem_realce = realce_contraste(image, alpha=2, beta=1)
+
+def filtro(image):
+    #Aplicar um filtro que torna visível os vasos sanguíneos:
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    #Separando as cores
+    r, g, b = cv2.split(image_rgb)
+    #Equalizando
+    eq_g_canal = cv2.equalizeHist(g)
+
+    return r, g, b, eq_g_canal, image_rgb
+
+
+def encontrar_range(imagem):
+    # Converter a imagem para HSV
+    imagem_hsv = cv2.cvtColor(imagem, cv2.COLOR_BGR2HSV)
+
+    # limites inferiores e superiores
+    limite_inferior = np.array([12, 50, 50])
+    limite_superior = np.array([30, 184, 230])
+
+    imagem_auxiliar = cv2.inRange(imagem_hsv, limite_inferior, limite_superior)
+
+    # Encontre os valores mínimos e máximos nos canais H, S e V para o intervalo de cores
+    h_min, s_min, v_min = np.min(imagem_hsv[imagem_auxiliar > 0], axis=0)
+    h_max, s_max, v_max = np.max(imagem_hsv[imagem_auxiliar > 0], axis=0)
+
+    return (h_min, s_min, v_min), (h_max, s_max, v_max), imagem_auxiliar
+
+imspecs_min, imspecs_max, imagem_auxiliar = encontrar_range(image)
+
+#Especificações do range de cores da imagem:
+print(imspecs_min)
+print(imspecs_max)
+
+#Mostrando o efeito do filtro:
+im_r, im_g, im_b, eq_g_image, image_rgb = filtro(image)
+
+#Exibindo os resultados
+plt.subplot(131)
+plt.imshow(image_rgb)
+plt.title('Imagem Original')
+plt.subplot(132)
+plt.imshow(im_g, cmap='gray')
+plt.title('Canal G')
+plt.subplot(133)
+plt.imshow(eq_g_image, cmap='gray')
+plt.title('Canal G depois da equalização de histograma')
+plt.show()
