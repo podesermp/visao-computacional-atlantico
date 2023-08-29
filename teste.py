@@ -28,9 +28,9 @@ from matplotlib import pyplot as plt
 
 # 2 jeitos: 
 # 1- caminho absoluto ( *** Colocar Caminho da sua Máquina *** ) : 
-image_path = r'C:\Users\01234\OneDrive\Área de Trabalho\Avanti Equipe3\visao-computacional-atlantico\data-retina\test\image\0.png'
+# image_path = r'C:\Users\01234\OneDrive\Área de Trabalho\Avanti Equipe3\visao-computacional-atlantico\data-retina\test\image\0.png'
 # 2- caminho relativo :
-# image_path = 'data-retina/test/image/1.png' 
+image_path = './data-retina/test/image/0.png' 
 image= cv2.imread(image_path)
 
 # Resolvi o meu (Arthur) deste jeito: 
@@ -38,7 +38,8 @@ image= cv2.imread(image_path)
 
 print(image)
 
-image_rgb = cv2.cvtColor(image, cv2.COLOR_BAYER_BG2BGR)
+# image_rgb = cv2.cvtColor(image, cv2.COLOR_BAYER_BG2BGR) # isso tava dando erro ao rodar, então modifiquei pra linha 42 - MP
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 plt.imshow(image_rgb)
 plt.axis('off')
@@ -116,7 +117,7 @@ plt.title('lmagem gray')
 
 # Mostrar a imagem normalizada
 plt.subplot(1, 2, 2)
-plt.imshow(normalized_image, cmap='gray')
+plt.imshow(normalized_image)
 plt.title('lmagem Normalizada')
 plt.show()
 
