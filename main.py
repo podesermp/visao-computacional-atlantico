@@ -23,13 +23,29 @@ def filtro(image):
     # Separando as cores
     r, g, b = cv2.split(image)
     
-    # Equalizando
+    # Equalizando - aumentando a nitidez
     g = cv2.equalizeHist(g)
     b = cv2.equalizeHist(b)
 
     #juntando os canais
     imagem_equalizada = cv2.merge([r,g,b])
     return r, g, b, imagem_equalizada
+
+# Aplicar clahe em uma imagem (1-D)
+def apply_clahe(img):
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(3,3))
+    clahe_image = clahe.apply(img)
+    return clahe_image
+
+# Aplicar filtro mediana em uma imagem
+def filter_med(img):
+    imgMed = cv2.medianBlur(img, 5)
+    return imgMed
+
+# Aplicar filtro gaussiano em uma imagem
+def filter_gauss(img):
+    imgGauss = cv2.GaussianBlur(img, (3,3), 0)
+    return imgGauss
 
 image_path = './data-retina/test/image/0.png' 
 image= cv2.imread(image_path)
@@ -41,7 +57,16 @@ image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 # Alpha > 1 & Alpha < 3. Beta >= 1 && Beta < 2 *Valores aproximados
 imagem_realcada = realce_contraste(image_rgb, alpha=2, beta=1)
 
-r, g, b, imagem_preprocessada = filtro(imagem_realcada)
+# r, g, b, imagem_filtrada = filtro(imagem_realcada)
+
+r,g,b = cv2.split(imagem_realcada)
+r = apply_clahe(r)
+g = apply_clahe(g)
+b = apply_clahe(b)
+
+img_clahe = cv2.merge([r,g,b])
+img_preprocessed = filter_med(img_clahe)
+# img_preprocessed = filter_gauss(img_med)
 
 # show(imagem_realcada, 'Imagem realçada')
 
@@ -72,7 +97,7 @@ plt.title('Imagem realçada')
 plt.axis('off')
 
 plt.subplot(236)
-plt.imshow(imagem_preprocessada, cmap='gray')
-plt.title('Imagem pré processada')
+plt.imshow(img_preprocessed)
+plt.title('Imagem pre processada')
 plt.axis('off')
 plt.show()

@@ -1,0 +1,4 @@
+Clahe nos três canais depois juntando pra fazer a imagem colorida com melhor contraste,
+clahe no canal verde pq tem mais detalhes da Retinopatia,
+filtro da mediana, 
+filtro gaussiano
